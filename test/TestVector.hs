@@ -8,7 +8,8 @@ import TestUtil (assertVecEqual)
 
 import Linear.V3
 
-import Vector as V
+import qualified Vector as V
+import Vector ((.*.), (***), (+*+), (-*-))
 
 unitTests = testGroup "Vector unit tests" [
     testCase "Dot product" $ assertEqual "" 32 ((V3 1 2 3) .*. (V3 4 5 6)),
