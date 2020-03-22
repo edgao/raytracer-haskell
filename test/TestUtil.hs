@@ -5,7 +5,7 @@ module TestUtil
 import Test.Tasty.HUnit (Assertion, assertFailure)
 
 import Control.Monad (unless)
-import Linear.V3
+import Linear.V3 (V3 (..))
 
 -- A slightly tweaked version of assertEquals, which accepts a margin of error (to handle rounding error)
 assertVecEqual :: String -> Double -> V3 Double -> V3 Double -> Assertion

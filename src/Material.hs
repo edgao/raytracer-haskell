@@ -5,7 +5,7 @@ module Material
       Mirror (..)
     ) where
 
-import Linear.V3
+import Linear.V3 (V3 (..))
 import qualified Vector as V
 
 -- All values are between 0 and 1

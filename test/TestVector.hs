@@ -6,7 +6,7 @@ import Test.Tasty (defaultMain, testGroup)
 import Test.Tasty.HUnit (assertEqual, testCase)
 import TestUtil (assertVecEqual)
 
-import Linear.V3
+import Linear.V3 (V3 (..))
 
 import qualified Vector as V
 import Vector ((.*.), (***), (+*+), (-*-))

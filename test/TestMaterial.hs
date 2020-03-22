@@ -5,7 +5,7 @@ module TestMaterial
 import Test.Tasty (defaultMain, testGroup)
 import Test.Tasty.HUnit (assertEqual, testCase)
 
-import Linear.V3
+import Linear.V3 (V3 (..))
 
 import Material as M
 
