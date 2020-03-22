@@ -28,3 +28,8 @@ normalize v = scale (1 / norm v) v
 
 reflect :: V3 Double -> V3 Double -> V3 Double
 reflect incidentRay normalVector = incidentRay -*- ((2 * (incidentRay .*. normalVector)) *** normalVector)
+
+data Ray = Ray {
+  origin :: V3 Double,
+  direction :: V3 Double
+}
