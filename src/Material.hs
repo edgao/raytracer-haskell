@@ -1,5 +1,7 @@
 module Material
-    (
+    ( Material,
+      hit,
+      Mirror (..)
     ) where
 
 import Linear.V3

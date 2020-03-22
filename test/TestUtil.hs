@@ -3,8 +3,8 @@ module TestUtil
     ) where
 
 import Test.Tasty.HUnit (Assertion, assertFailure)
-import Control.Monad (unless)
 
+import Control.Monad (unless)
 import Linear.V3
 
 -- A slightly tweaked version of assertEquals, which accepts a margin of error (to handle rounding error)
