@@ -9,11 +9,11 @@ import Linear.V3 (V3 (..))
 
 import Shape as S
 
-unitTests = testGroup "Shape unit tests" [
+unitTests = testGroup "Shape" [
     triangleTests
   ]
 
-triangleTests = testGroup "Triangle shape" [
+triangleTests = testGroup "Triangle" [
     testCase "Basic intersection" $ assertEqual ""
       (Just (V3 0 0 0))
       (intersect (Triangle (V3 (-1) 0 0) (V3 0 1 0) (V3 1 0 0)) (V3 0 0 1) (V3 0 0 (-1))),

@@ -11,7 +11,7 @@ import Linear.V3 (V3 (..))
 import qualified Vector as V
 import Vector ((.*.), (***), (+*+), (-*-))
 
-unitTests = testGroup "Vector unit tests" [
+unitTests = testGroup "Vector" [
     testCase "Dot product" $ assertEqual "" 32 ((V3 1 2 3) .*. (V3 4 5 6)),
     testCase "Scale" $ assertEqual "" (V3 2 4 6) (2 *** (V3 1 2 3)),
     testCase "Add" $ assertEqual "" (V3 5 7 9) ((V3 1 2 3) +*+ (V3 4 5 6)),
