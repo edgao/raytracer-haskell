@@ -21,6 +21,9 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
 - base >= 4.7 && < 5
+- linear >=1.20.9
+- tasty >=1.2.3
+- tasty-hunit >=0.10
 
 library:
   source-dirs: src
