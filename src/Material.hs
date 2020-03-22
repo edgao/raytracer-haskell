@@ -5,6 +5,7 @@ module Material
       ReflectionStrategy (..),
       reflect,
       Material (..),
+      Light (..),
       reflectedLight
     ) where
 
@@ -58,21 +59,26 @@ data Material = PhongMaterial {
   shininess :: Double
 }
 
-reflectedLight :: Material -> [(Color, V3 Double)] -> Color -> V3 Double -> V3 Double -> V3 Double -> Color
+data Light = Light {
+  intensity :: Color,
+  location :: V3 Double
+}
+
+reflectedLight :: Material -> [Light] -> Color -> V3 Double -> V3 Double -> V3 Double -> Color
 -- All location vectors (lights, viewer, reflectionPoint) are global coordinates
 reflectedLight (PhongMaterial ambientCoeff diffuseCoeff specularCoeff shininess) lights ambientLight normal viewer reflectionPoint =
   let reflections = foldr ((+^+) . calculateLight) (Color 0 0 0) lights
       ambientReflection = ambientCoeff *^* ambientLight
   in reflections +^+ ambientReflection
-  where calculateLight (lightColor, lightLocation) =
+  where calculateLight (Light intensity lightLocation) =
           let lightDirection = V.normalize $ lightLocation - reflectionPoint
               diffuseProjection = lightDirection .*. normal
-              diffuse = if diffuseProjection > 0 then diffuseCoeff *^* (diffuseProjection *^^* lightColor)
+              diffuse = if diffuseProjection > 0 then diffuseCoeff *^* (diffuseProjection *^^* intensity)
                         else Color 0 0 0
               reflectedLightDirection = V.negReflect lightDirection normal
               viewerDirection = V.normalize $ viewer -*- reflectionPoint
               specularProjection = reflectedLightDirection .*. viewerDirection
               specular = if diffuseProjection > 0 && specularProjection > 0
-                            then specularCoeff *^* ((specularProjection ** shininess) *^^* lightColor)
+                            then specularCoeff *^* ((specularProjection ** shininess) *^^* intensity)
                          else Color 0 0 0
           in diffuse +^+ specular

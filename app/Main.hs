@@ -37,8 +37,9 @@ material = M.PhongMaterial (M.Color 0.2 0 0) (M.Color 0 0.7 0) (M.Color 0 0 1) 1
 
 lights = [
     (
-      M.Color 1 1 1,
-      V3 100 100 100
+      M.Light
+      (M.Color 1 1 1)
+      (V3 100 100 100)
     )
   ]
 
