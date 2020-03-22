@@ -24,6 +24,7 @@ dependencies:
 - linear >=1.20.9
 - tasty >=1.2.3
 - tasty-hunit >=0.10
+- bytestring >= 0.10.10
 - JuicyPixels >= 3.3.5
 
 library:

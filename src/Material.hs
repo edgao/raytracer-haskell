@@ -1,7 +1,11 @@
 module Material
     ( Color (..),
+      clipColor,
+      render,
       ReflectionStrategy (..),
-      reflect
+      reflect,
+      Material (..),
+      reflectedLight
     ) where
 
 import Linear.V3 (V3 (..))
@@ -32,6 +36,10 @@ clipColor :: Color -> Color
 clipColor (Color r g b) = Color (clip r) (clip g) (clip b)
   where clip x = min 1 $ max 0 x
 
+render :: Color -> (Int, Int, Int)
+render (Color r g b) = (renderChannel r, renderChannel g, renderChannel b)
+  where renderChannel x = round (x * 255)
+
 type ColorMultiplier = Color
 
 newtype ReflectionStrategy = Mirror {multiplier :: ColorMultiplier}
@@ -50,15 +58,16 @@ data Material = PhongMaterial {
   shininess :: Double
 }
 
-reflectedLight :: Material -> [(Color, V3 Double)] -> Color -> V3 Double -> V3 Double -> Color
--- Light locations and viewer location are relative to the point of reflection
--- I.e. they are treated as local coordinates
-reflectedLight (PhongMaterial ambientCoeff diffuseCoeff specularCoeff shininess) lights ambientLight normal viewer =
+reflectedLight :: Material -> [(Color, V3 Double)] -> Color -> V3 Double -> V3 Double -> V3 Double -> Color
+-- All location vectors (lights, viewer, reflectionPoint) are global coordinates
+reflectedLight (PhongMaterial ambientCoeff diffuseCoeff specularCoeff shininess) lights ambientLight normal viewer reflectionPoint =
   let reflections = foldr ((+^+) . calculateLight) (Color 0 0 0) lights
       ambientReflection = ambientCoeff *^* ambientLight
   in reflections +^+ ambientReflection
   where calculateLight (lightColor, lightLocation) =
-          let diffuse = diffuseCoeff *^* ((V.normalize lightLocation .*. normal) *^^* lightColor)
-              reflectedLightDirection = V.negReflect (V.normalize lightLocation) normal
-              specular = specularCoeff *^* (((reflectedLightDirection .*. V.normalize viewer) ** shininess) *^^* lightColor)
+          let lightDirection = V.normalize $ lightLocation - reflectionPoint
+              diffuse = diffuseCoeff *^* ((lightDirection .*. normal) *^^* lightColor)
+              reflectedLightDirection = V.negReflect lightDirection normal
+              viewerDirection = V.normalize $ viewer -*- reflectionPoint
+              specular = specularCoeff *^* (((reflectedLightDirection .*. viewerDirection) ** shininess) *^^* lightColor)
           in diffuse +^+ specular
