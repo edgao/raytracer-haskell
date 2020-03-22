@@ -1,6 +1,6 @@
 module Material
     ( Color (..),
-      Material (..),
+      ReflectionStrategy (..),
       hit
     ) where
 
@@ -19,10 +19,10 @@ instance Show Color
 
 type ColorMultiplier = Color
 
-newtype Material = Mirror {multiplier :: ColorMultiplier}
+newtype ReflectionStrategy = Mirror {multiplier :: ColorMultiplier}
 
 -- accepts an incident ray and normal vector, and returns a list of (reflected ray, multiplier)
-hit :: Material -> V3 Double -> V3 Double -> [(V3 Double, ColorMultiplier)]
+hit :: ReflectionStrategy -> V3 Double -> V3 Double -> [(V3 Double, ColorMultiplier)]
 hit (Mirror multiplier) incidentRay normalVector = [(
       V.reflect incidentRay normalVector,
       multiplier
