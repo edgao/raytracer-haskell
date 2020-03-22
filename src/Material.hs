@@ -1,8 +1,7 @@
 module Material
     ( Color (..),
-      Material,
-      hit,
-      Mirror (..)
+      Material (..),
+      hit
     ) where
 
 import Linear.V3 (V3 (..))
@@ -20,13 +19,11 @@ instance Show Color
 
 type ColorMultiplier = Color
 
-class Material a where
-  -- accepts an incident ray and normal vector, and returns a list of (reflected ray, multiplier)
-  hit :: a -> V3 Double -> V3 Double -> [(V3 Double, ColorMultiplier)]
+newtype Material = Mirror {multiplier :: ColorMultiplier}
 
-newtype Mirror = Mirror {multiplier :: ColorMultiplier}
-instance (Material Mirror) where
-  hit (Mirror multiplier) incidentRay normalVector = [(
-        V.reflect incidentRay normalVector,
-        multiplier
-     )]
+-- accepts an incident ray and normal vector, and returns a list of (reflected ray, multiplier)
+hit :: Material -> V3 Double -> V3 Double -> [(V3 Double, ColorMultiplier)]
+hit (Mirror multiplier) incidentRay normalVector = [(
+      V.reflect incidentRay normalVector,
+      multiplier
+    )]
