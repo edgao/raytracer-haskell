@@ -1,13 +1,6 @@
 -- I'm sure that the Linear module provides most/all of this functionality
 -- but I don't want to figure out how to use it :P
-module Vector
-    ( dot,
-      scale,
-      add,
-      reflect,
-      norm,
-      normalize
-    ) where
+module Vector where
 
 import qualified Linear.V3                     as V
 
