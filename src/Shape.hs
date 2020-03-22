@@ -20,8 +20,8 @@ data Shape =
   }
 
 -- given a shape, origin point, and direction, return the intersection point
-intersect :: Shape -> V3 Double -> V3 Double -> Maybe (V3 Double)
-intersect (Triangle v1 v2 v3) origin ray =
+intersect :: Shape -> V.Ray -> Maybe (V3 Double)
+intersect (Triangle v1 v2 v3) (V.Ray origin ray) =
   -- https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
   -- I have no idea how this works though :(
   let edge1 = v2 -*- v1
