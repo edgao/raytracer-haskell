@@ -26,8 +26,12 @@ norm (V3 x y z) = sqrt (x * x + y * y + z * z)
 normalize :: V3 Double -> V3 Double
 normalize v = scale (1 / norm v) v
 
+-- incidentRay is pointed _towards_ us, and the returned vector is pointed _away_ from us
 reflect :: V3 Double -> V3 Double -> V3 Double
 reflect incidentRay normalVector = incidentRay -*- ((2 * (incidentRay .*. normalVector)) *** normalVector)
+
+negReflect :: V3 Double -> V3 Double -> V3 Double
+negReflect incidentRay = reflect ((-1) *** incidentRay)
 
 data Ray = Ray {
   origin :: V3 Double,
