@@ -14,6 +14,9 @@ unitTests = testGroup "Shape unit tests" [
   ]
 
 triangleTests = testGroup "Triangle shape" [
+    testCase "Basic intersection" $ assertEqual ""
+      (Just (V3 0 0 0))
+      (intersect (Triangle (V3 (-1) 0 0) (V3 0 1 0) (V3 1 0 0)) (V3 0 0 1) (V3 0 0 (-1))),
     testCase "Calculate normal" $ assertEqual ""
       (V3 0 0 1)
       (normal (Triangle (V3 (-1) 0 0) (V3 0 1 0) (V3 1 0 0)) (V3 42 84 126))
