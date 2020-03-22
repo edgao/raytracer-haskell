@@ -1,7 +1,8 @@
 module Vector
     ( dot,
       scale,
-      add
+      add,
+      reflect,
     ) where
 
 import qualified Linear.V3                     as V
@@ -14,3 +15,6 @@ scale scalar (V.V3 x y z) = V.V3 (scalar * x) (scalar * y) (scalar * z)
 
 add :: V.V3 Double -> V.V3 Double -> V.V3 Double
 add (V.V3 x1 y1 z1) (V.V3 x2 y2 z2) = V.V3 (x1 + x2) (y1 + y2) (z1 + z2)
+
+reflect :: V.V3 Double -> V.V3 Double -> V.V3 Double
+reflect incidentRay normalVector = add incidentRay (scale (-2 * dot incidentRay normalVector) normalVector)
