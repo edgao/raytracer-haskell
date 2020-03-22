@@ -1,6 +1,6 @@
 module Material
     ( Color (..),
-      clipColor,
+      clampColor,
       render,
       ReflectionStrategy (..),
       reflect,
@@ -13,7 +13,7 @@ import qualified Vector as V
 import Vector ((.*.), (***), (+*+), (-*-))
 
 -- 0 represents minimum brightness, 1 represents maximum.
--- Callers should use clipColor to sanitize values outside those bounds.
+-- Callers should use clampColor to sanitize values outside those bounds.
 data Color = Color {
   r :: Double,
   g :: Double,
@@ -32,9 +32,9 @@ instance Show Color
 (*^^*) :: Double -> Color -> Color
 (*^^*) c (Color r g b) = Color (c * r) (c * g) (c * b)
 
-clipColor :: Color -> Color
-clipColor (Color r g b) = Color (clip r) (clip g) (clip b)
-  where clip x = min 1 $ max 0 x
+clampColor :: Color -> Color
+clampColor (Color r g b) = Color (clamp r) (clamp g) (clamp b)
+  where clamp x = min 1 $ max 0 x
 
 render :: Color -> (Int, Int, Int)
 render (Color r g b) = (renderChannel r, renderChannel g, renderChannel b)
@@ -66,8 +66,13 @@ reflectedLight (PhongMaterial ambientCoeff diffuseCoeff specularCoeff shininess)
   in reflections +^+ ambientReflection
   where calculateLight (lightColor, lightLocation) =
           let lightDirection = V.normalize $ lightLocation - reflectionPoint
-              diffuse = diffuseCoeff *^* ((lightDirection .*. normal) *^^* lightColor)
+              diffuseProjection = lightDirection .*. normal
+              diffuse = if diffuseProjection > 0 then diffuseCoeff *^* (diffuseProjection *^^* lightColor)
+                        else Color 0 0 0
               reflectedLightDirection = V.negReflect lightDirection normal
               viewerDirection = V.normalize $ viewer -*- reflectionPoint
-              specular = specularCoeff *^* (((reflectedLightDirection .*. viewerDirection) ** shininess) *^^* lightColor)
+              specularProjection = reflectedLightDirection .*. viewerDirection
+              specular = if diffuseProjection > 0 && specularProjection > 0
+                            then specularCoeff *^* ((specularProjection ** shininess) *^^* lightColor)
+                         else Color 0 0 0
           in diffuse +^+ specular
