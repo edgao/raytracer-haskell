@@ -1,6 +1,7 @@
 module Shape
     ( intersect,
       normal,
+      intersectData,
       Shape (..)
     ) where
 
@@ -47,3 +48,10 @@ intersect (Triangle v1 v2 v3) (V.Ray origin ray) =
 normal :: Shape -> V3 Double -> V3 Double
 -- Triangle normal doesn't depend on where the intersection point is located
 normal (Triangle a b c) _ = V.normalize $ V3.cross (c -*- a) (b -*- a)
+
+intersectData :: Shape -> V.Ray -> Maybe (V3 Double, V3 Double)
+intersectData shape ray =
+  let intersection = intersect shape ray
+  in case intersection of
+      Nothing -> Nothing
+      Just point -> Just (point, normal shape point)

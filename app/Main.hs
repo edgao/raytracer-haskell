@@ -7,7 +7,6 @@ import Codec.Picture.Saving as PS (imageToPng)
 import qualified Material as M
 import Linear.V3 (V3 (..))
 import qualified Vector as V
-import Vector ((-*-))
 
 main :: IO ()
 main = do
