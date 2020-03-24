@@ -36,12 +36,12 @@ sphereIntersection x y = if x * x + y * y > 1 then Nothing
 
 material = M.PhongMaterial (M.Color 0.2 0 0) (M.Color 0 0.7 0) (M.Color 0 0 1) 10
 
-shape = S.Triangle (V3 1 1 0) (V3 4 4 0) (V3 8 1 0)
+shape = S.Triangle (V3 (-5) (-5) 0) (V3 0 4 0) (V3 5 (-5) 0)
 
 lights = [
     M.Light
       (M.Color 1 1 1)
-      (V3 100 100 100)
+      (V3 0 0 100)
   ]
 
 ambientLight = M.Color 1 1 1
