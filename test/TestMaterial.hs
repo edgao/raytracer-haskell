@@ -15,6 +15,6 @@ unitTests = testGroup "Material" [
 
 mirrorTests = testGroup "Mirror" [
     testCase "Simple reflection" $ assertEqual ""
-      [(V3 0 (-1) 1, M.Color 0.15 0.25 0.35)]
-      (M.reflect (M.Mirror $ M.Color 0.15 0.25 0.35) (V3 0 (-1) (-1)) (V3 0 0 1))
+      [(V3 0 (-1) 1)]
+      (M.reflect M.Mirror (V3 0 (-1) (-1)) (V3 0 0 1))
   ]
