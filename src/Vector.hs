@@ -20,8 +20,11 @@ subtract :: V3 Double -> V3 Double -> V3 Double
 subtract (V3 x1 y1 z1) (V3 x2 y2 z2) = V3 (x1 - x2) (y1 - y2) (z1 - z2)
 (-*-) = Vector.subtract
 
+normSquare :: V3 Double -> Double
+normSquare (V3 x y z) = x * x + y * y + z * z
+
 norm :: V3 Double -> Double
-norm (V3 x y z) = sqrt (x * x + y * y + z * z)
+norm = sqrt . normSquare
 
 normalize :: V3 Double -> V3 Double
 normalize v = scale (1 / norm v) v

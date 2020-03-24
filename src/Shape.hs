@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
+
 module Shape
     ( intersect,
       normal,
@@ -13,11 +15,9 @@ import Vector ((.*.), (***), (+*+), (-*-))
 data Shape =
   -- Vertices are in "clockwise" order, when faced from the front side
   Triangle {a :: V3 Double, b :: V3 Double, c :: V3 Double}
-  | Ellipsoid {
+  | Sphere {
     center :: V3 Double,
-    r1 :: V3 Double,
-    r2 :: V3 Double,
-    r3 :: V3 Double
+    radius :: Double
   }
 
 -- given a shape, origin point, and direction, return the intersection point
@@ -44,10 +44,21 @@ intersect (Triangle v1 v2 v3) (V.Ray origin ray) =
                   let t = f * (edge2 .*. q)
                   in if t > 0.000001 then Just $ origin +*+ (t *** ray)
                     else Nothing
+intersect (Sphere center radius) (V.Ray origin ray) =
+  let relOrigin = center -*- origin
+      rayProjection = relOrigin .*. ray
+  in if rayProjection < 0 then Nothing
+     else let closestApproachSquare = rayProjection * rayProjection - V.normSquare relOrigin
+              radiusSquare = radius * radius
+          in if closestApproachSquare > radiusSquare then Nothing
+             else let dist = sqrt (radiusSquare - closestApproachSquare)
+                      rayDirection = V.normalize ray
+                  in Just $ origin +*+ ((rayProjection - dist) *** rayDirection)
 
 normal :: Shape -> V3 Double -> V3 Double
 -- Triangle normal doesn't depend on where the intersection point is located
 normal (Triangle a b c) _ = V.normalize $ V3.cross (c -*- a) (b -*- a)
+normal (Sphere center _) position = V.normalize $ position -*- center
 
 intersectData :: Shape -> V.Ray -> Maybe (V3 Double, V3 Double)
 intersectData shape ray =

@@ -11,7 +11,8 @@ import qualified Vector as V
 import Shape as S
 
 unitTests = testGroup "Shape" [
-    triangleTests
+    triangleTests,
+    sphereTests
   ]
 
 triangleTests = testGroup "Triangle" [
@@ -48,4 +49,13 @@ triangleTests = testGroup "Triangle" [
     testCase "Slanted normal" $ assertEqual ""
       (V.normalize (V3 1 1 1))
       (normal (Triangle (V3 0 1 0) (V3 1 0 0) (V3 0 0 1)) (V3 42 84 126))
+  ]
+
+sphereTests = testGroup "Sphere" [
+    testCase "Basic intersection" $ assertEqual ""
+      (Just (V3 0 0 1))
+      (intersect (Sphere (V3 0 0 0) 1) (V.Ray (V3 0 0 10) (V3 0 0 (-1)))),
+    testCase "Basic normal" $ assertEqual ""
+      (V3 0 0 1)
+      (normal (Sphere (V3 0 0 0) 1) (V3 0 0 1))
   ]
