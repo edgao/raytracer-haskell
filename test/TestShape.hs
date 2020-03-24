@@ -57,5 +57,11 @@ sphereTests = testGroup "Sphere" [
       (intersect (Sphere (V3 0 0 0) 1) (V.Ray (V3 0 0 10) (V3 0 0 (-1)))),
     testCase "Basic normal" $ assertEqual ""
       (V3 0 0 1)
-      (normal (Sphere (V3 0 0 0) 1) (V3 0 0 1))
+      (normal (Sphere (V3 0 0 0) 1) (V3 0 0 1)),
+    testCase "Offset intersection" $ assertEqual ""
+      (Just (V3 5 6 3))
+      (intersect (Sphere (V3 5 6 7) 4) (V.Ray (V3 5 6 0) (V3 0 0 1))),
+    testCase "Offset normal" $ assertEqual ""
+      (V3 1 0 0)
+      (normal (Sphere (V3 5 6 7) 4) (V3 9 6 7))
   ]
