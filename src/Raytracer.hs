@@ -21,7 +21,8 @@ trace shapes lights ambientLight reflectionStrategy maxBounces ray@(V.Ray origin
       let reflections = M.reflect reflectionStrategy direction normal
           outboundRays = map (V.Ray intersection) reflections
           subtraceColors = map (trace shapes lights ambientLight reflectionStrategy (maxBounces - 1)) outboundRays
-      in foldr (+^+) (M.Color 0 0 0) subtraceColors
+          hereColor = M.reflectedLight material lights ambientLight normal origin intersection
+      in (foldr (+^+) (M.Color 0 0 0) subtraceColors) +^+ hereColor
 
 -- Find the (intersection, normal, material) corresponding to the first shape that this ray would hit
 findIntersection :: [(S.Shape, M.Material)] -> V.Ray -> Maybe (V3 Double, V3 Double, M.Material)
