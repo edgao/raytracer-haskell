@@ -55,6 +55,12 @@ sphereTests = testGroup "Sphere" [
     testCase "Basic intersection" $ assertEqual ""
       (Just (V3 0 0 1))
       (intersect (Sphere (V3 0 0 0) 1) (V.Ray (V3 0 0 10) (V3 0 0 (-1)))),
+    testCase "Basic non-intersection" $ assertEqual ""
+      Nothing
+      (intersect (Sphere (V3 0 0 0) 1) (V.Ray (V3 3 0 10) (V3 0 0 (-1)))),
+    testCase "Basic tangent" $ assertEqual ""
+      (Just (V3 1 0 0))
+      (intersect (Sphere (V3 0 0 0) 1) (V.Ray (V3 1 0 10) (V3 0 0 (-1)))),
     testCase "Basic normal" $ assertEqual ""
       (V3 0 0 1)
       (normal (Sphere (V3 0 0 0) 1) (V3 0 0 1)),

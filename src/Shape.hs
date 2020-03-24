@@ -45,14 +45,14 @@ intersect (Triangle v1 v2 v3) (V.Ray origin ray) =
                   in if t > 0.000001 then Just $ origin +*+ (t *** ray)
                     else Nothing
 intersect (Sphere center radius) (V.Ray origin ray) =
-  let relOrigin = center -*- origin
-      rayProjection = relOrigin .*. ray
+  let rayDirection = V.normalize ray
+      relCenter = center -*- origin
+      rayProjection = relCenter .*. rayDirection
   in if rayProjection < 0 then Nothing
-     else let closestApproachSquare = rayProjection * rayProjection - V.normSquare relOrigin
+     else let closestApproachSquare =  V.normSquare relCenter - rayProjection * rayProjection
               radiusSquare = radius * radius
           in if closestApproachSquare > radiusSquare then Nothing
              else let dist = sqrt (radiusSquare - closestApproachSquare)
-                      rayDirection = V.normalize ray
                   in Just $ origin +*+ ((rayProjection - dist) *** rayDirection)
 
 normal :: Shape -> V3 Double -> V3 Double
