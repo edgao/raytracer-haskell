@@ -1,5 +1,7 @@
 module Material
     ( Color (..),
+      (+^+),
+      (*^*),
       clampColor,
       render,
       ReflectionStrategy (..),
@@ -66,6 +68,7 @@ data Light = Light {
 
 reflectedLight :: Material -> [Light] -> Color -> V3 Double -> V3 Double -> V3 Double -> Color
 -- All location vectors (lights, viewer, reflectionPoint) are global coordinates
+-- Returns a non-negative Color
 reflectedLight (PhongMaterial ambientCoeff diffuseCoeff specularCoeff shininess) lights ambientLight normal viewer reflectionPoint =
   let reflections = foldr ((+^+) . calculateLight) (Color 0 0 0) lights
       ambientReflection = ambientCoeff *^* ambientLight
