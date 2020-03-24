@@ -45,14 +45,11 @@ render (Color r g b) = (renderChannel r, renderChannel g, renderChannel b)
 
 type ColorMultiplier = Color
 
-newtype ReflectionStrategy = Mirror {multiplier :: ColorMultiplier}
+data ReflectionStrategy = Mirror
 
 -- accepts an incident ray and normal vector, and returns a list of (reflected ray, multiplier)
-reflect :: ReflectionStrategy -> V3 Double -> V3 Double -> [(V3 Double, ColorMultiplier)]
-reflect (Mirror multiplier) incidentRay normalVector = [(
-      V.reflect incidentRay normalVector,
-      multiplier
-    )]
+reflect :: ReflectionStrategy -> V3 Double -> V3 Double -> [V3 Double]
+reflect Mirror incidentRay normalVector = [V.reflect incidentRay normalVector]
 
 data Material = PhongMaterial {
   ambient :: ColorMultiplier,
