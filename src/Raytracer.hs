@@ -21,7 +21,8 @@ trace shapes lights ambientLight reflectionStrategy maxBounces ray@(V.Ray origin
       let reflections = M.reflect reflectionStrategy direction normal
           outboundRays = map (V.Ray intersection) reflections
           subtraceColors = map (trace shapes lights ambientLight reflectionStrategy (maxBounces - 1)) outboundRays
-          hereColor = M.reflectedLight material lights ambientLight normal origin intersection
+          visibleLights = filter (not . isPresent . findIntersection shapes . V.Ray intersection . M.location) lights
+          hereColor = M.reflectedLight material visibleLights ambientLight normal origin intersection
       in foldr (+^+) (M.Color 0 0 0) subtraceColors +^+ hereColor
 
 -- Find the (intersection, normal, material) corresponding to the first shape that this ray would hit
@@ -33,13 +34,15 @@ findIntersection shapes ray@(V.Ray origin direction) =
               (intersection, normal, material, _) = foldr selectLower firstIntersectionData rest
           in Just (intersection, normal, material)
   where getData (shape, material) =
-          let intersectData = S.intersectData shape ray
+          let intersectData = S.intersectData ray shape
           in case intersectData of
               Just (intersection, normal) -> Just (intersection, normal, material)
               Nothing -> Nothing
-        isPresent m = case m of
-          Just _ -> True
-          Nothing -> False
         extract (Just m) = m
         getRatio (point, normal, material) = (point, normal, material, (V.normSquare $ point -*- origin) / (V.normSquare direction))
         selectLower i1@(int1, norm1, mat1, ratio1) i2@(int2, norm2, mat2, ratio2) = if ratio1 < ratio2 then i1 else i2
+
+isPresent :: Maybe a -> Bool
+isPresent m = case m of
+  Just _ -> True
+  Nothing -> False

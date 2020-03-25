@@ -60,8 +60,8 @@ normal :: Shape -> V3 Double -> V3 Double
 normal (Triangle a b c) _ = V.normalize $ V3.cross (c -*- a) (b -*- a)
 normal (Sphere center _) position = V.normalize $ position -*- center
 
-intersectData :: Shape -> V.Ray -> Maybe (V3 Double, V3 Double)
-intersectData shape ray =
+intersectData :: V.Ray -> Shape -> Maybe (V3 Double, V3 Double)
+intersectData ray shape =
   let intersection = intersect shape ray
   in case intersection of
       Nothing -> Nothing

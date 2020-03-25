@@ -3,5 +3,5 @@
 ## Compiling
 To build:
 ```shell
-stack build .
+stack build
 ```
