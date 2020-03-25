@@ -8,6 +8,7 @@ import qualified Vector as V
 import Linear.V3 (V3 (..))
 import Vector ((-*-))
 import Material ((+^+), (*^*))
+import Data.Maybe (isJust, isNothing)
 
 trace :: [(S.Shape, M.Material)] -> [M.Light] -> M.Color -> M.ReflectionStrategy -> Int -> V.Ray -> M.Color
 trace shapes lights ambientLight _ 0 ray@(V.Ray origin direction) =
@@ -21,14 +22,14 @@ trace shapes lights ambientLight reflectionStrategy maxBounces ray@(V.Ray origin
       let reflections = M.reflect reflectionStrategy direction normal
           outboundRays = map (V.Ray intersection) reflections
           subtraceColors = map (trace shapes lights ambientLight reflectionStrategy (maxBounces - 1)) outboundRays
-          visibleLights = filter (not . isPresent . findIntersection shapes . V.Ray intersection . M.location) lights
+          visibleLights = filter (isNothing . findIntersection shapes . V.Ray intersection . M.location) lights
           hereColor = M.reflectedLight material visibleLights ambientLight normal origin intersection
       in foldr (+^+) (M.Color 0 0 0) subtraceColors +^+ hereColor
 
 -- Find the (intersection, normal, material) corresponding to the first shape that this ray would hit
 findIntersection :: [(S.Shape, M.Material)] -> V.Ray -> Maybe (V3 Double, V3 Double, M.Material)
 findIntersection shapes ray@(V.Ray origin direction) = 
-  let intersections = map extract $ filter isPresent $ map getData shapes
+  let intersections = map extract $ filter isJust $ map getData shapes
   in if null intersections then Nothing
      else let (firstIntersectionData:rest) = map getRatio intersections
               (intersection, normal, material, _) = foldr selectLower firstIntersectionData rest
@@ -41,8 +42,3 @@ findIntersection shapes ray@(V.Ray origin direction) =
         extract (Just m) = m
         getRatio (point, normal, material) = (point, normal, material, (V.normSquare $ point -*- origin) / (V.normSquare direction))
         selectLower i1@(int1, norm1, mat1, ratio1) i2@(int2, norm2, mat2, ratio2) = if ratio1 < ratio2 then i1 else i2
-
-isPresent :: Maybe a -> Bool
-isPresent m = case m of
-  Just _ -> True
-  Nothing -> False
