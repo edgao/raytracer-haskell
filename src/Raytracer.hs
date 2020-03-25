@@ -41,6 +41,5 @@ findIntersection shapes ray@(V.Ray origin direction) =
           Just _ -> True
           Nothing -> False
         extract (Just m) = m
-        vecDiv (V3 x1 _ _ ) (V3 x2 _ _) = x1 / x2
-        getRatio (point, normal, material) = (point, normal, material, vecDiv (point -*- origin) direction)
+        getRatio (point, normal, material) = (point, normal, material, (V.normSquare $ point -*- origin) / (V.normSquare direction))
         selectLower i1@(int1, norm1, mat1, ratio1) i2@(int2, norm2, mat2, ratio2) = if ratio1 < ratio2 then i1 else i2
