@@ -24,7 +24,7 @@ main = do
             y = 2 - 4.0 * (fromIntegral imgY) / (fromIntegral height)
             intersection = sphereIntersection x y
             viewport = V3 x y 5
-            (r, g, b) = M.render $ M.clampColor $ R.trace shapes lights ambientLight reflectionStrategy 8 (V.Ray camera (V.normalize $ viewport - camera))
+            (r, g, b) = M.render $ M.clampColor $ R.raytrace shapes lights ambientLight reflectionStrategy 8 (V.Ray camera (V.normalize $ viewport - camera))
         in P.PixelRGB8 (fromIntegral r) (fromIntegral g) (fromIntegral b)
   let img = P.generateImage fn width height
   BS.writeFile "/home/edgao/Desktop/test.png" $ PS.imageToPng $ P.ImageRGB8 img
