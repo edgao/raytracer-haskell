@@ -14,17 +14,14 @@ raytrace :: [(S.Shape, M.Material)] -> [M.Light] -> M.Color -> M.ReflectionStrat
 raytrace shapes lights ambientLight _ 0 ray@(V.Ray origin direction) =
   case findIntersection shapes ray of
     Nothing -> M.Color 0 0 0
-    Just (intersection, normal, material) -> M.reflectedLight material visibleLights ambientLight normal origin intersection
-      where visibleLights = findVisibleLights shapes intersection lights
+    Just (intersection, normal, material) -> lightingAt shapes lights ambientLight intersection normal material origin
 raytrace shapes lights ambientLight reflectionStrategy maxBounces ray@(V.Ray origin direction) =
   case findIntersection shapes ray of
     Nothing -> M.Color 0 0 0
     Just (intersection, normal, material) ->
-      let reflections = M.reflect reflectionStrategy direction normal
-          outboundRays = map (V.Ray intersection) reflections
+      let outboundRays = map (V.Ray intersection) $ M.reflect reflectionStrategy direction normal
           subtraceColors = map (raytrace shapes lights ambientLight reflectionStrategy (maxBounces - 1)) outboundRays
-          visibleLights = findVisibleLights shapes intersection lights
-          hereColor = M.reflectedLight material visibleLights ambientLight normal origin intersection
+          hereColor = lightingAt shapes lights ambientLight intersection normal material origin
       in foldr (+^+) (M.Color 0 0 0) subtraceColors +^+ hereColor
 
 -- Find the (intersection, normal, material) corresponding to the first shape that this ray would hit
@@ -33,10 +30,15 @@ findIntersection shapes ray@(V.Ray origin direction) = selectLowest getRatio $ m
   where getData (shape, material) = case S.intersectData ray shape of
           Nothing -> Nothing
           Just (intersection, normal) -> Just (intersection, normal, material)
-        getRatio (intersection, normal, material) = (V.normSquare $ intersection -*- origin) / (V.normSquare direction)
+        getRatio (intersection, _, _) = (V.normSquare $ intersection -*- origin) / (V.normSquare direction)
         selectLower fn a b = if fn a < fn b then a else b
         selectLowest _ [] = Nothing
         selectLowest fn (a1:as) = Just $ foldr (selectLower fn) a1 as
 
 findVisibleLights :: [(S.Shape, M.Material)] -> V3 Double -> [M.Light] -> [M.Light]
 findVisibleLights shapes position = filter (isNothing . findIntersection shapes . V.Ray position . (-*- position) . M.location)
+
+lightingAt :: [(S.Shape, M.Material)] -> [M.Light] -> M.Color -> V3 Double -> V3 Double -> M.Material -> V3 Double -> M.Color
+lightingAt shapes lights ambientLight intersection normal material origin =
+  let visibleLights = findVisibleLights shapes intersection lights
+  in M.reflectedLight material visibleLights ambientLight normal origin intersection

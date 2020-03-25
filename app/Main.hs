@@ -22,8 +22,8 @@ main = do
   BS.writeFile "/home/edgao/Desktop/test.png" $ PS.imageToPng $ P.ImageRGB8 img
   return ()
 
-width = 10000
-height = 10000
+width = 5000
+height = 5000
 
 camera = V3 15 15 2
 
@@ -37,7 +37,7 @@ imageCoordToWorldCoord imgX imgY = viewportUL +*+ ((fromIntegral imgX / fromInte
 
 shapes = [
     (
-      S.Triangle (V3 (-5) (-5) (-5)) (V3 0 4 (-5)) (V3 5 (-5) (-5)),
+      S.Triangle (V3 (-5) (-5) (-6)) (V3 0 4 (-6)) (V3 5 (-5) (-6)),
       M.PhongMaterial (M.Color 0.05 0.05 0.05) (M.Color 0.3 0.1 0.3) (M.Color 0.5 0.2 0.5) 50
     )
     ,
@@ -58,7 +58,7 @@ shapes = [
     ,
     (
       S.Sphere (V3 0 (-2) (-5)) 1,
-      M.PhongMaterial (M.Color 0.05 0.05 0.05) (M.Color 0.5 0.5 0.5) (M.Color 0.9 0.9 0.9) 50
+      M.PhongMaterial (M.Color 0.05 0.05 0.05) (M.Color 0.2 0.2 0.2) (M.Color 0.6 0.6 0.6) 50
     )
   ]
 
@@ -66,10 +66,14 @@ lights = [
     M.Light
       (M.Color 1 1 1)
       (V3 10 0 1)
-    -- ,
-    -- M.Light
-    --   (M.Color 1 1 1)
-    --   (V3 10 0 (-10))
+    ,
+    M.Light
+      (M.Color 1 1 1)
+      (V3 10 0 (-10))
+    ,
+    M.Light
+      (M.Color 1 1 1)
+      (V3 (-10) (-10) 10)
   ]
 
 ambientLight = M.Color 1 1 1
