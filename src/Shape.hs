@@ -1,11 +1,6 @@
 {-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
 
-module Shape
-    ( intersect,
-      normal,
-      intersectData,
-      Shape (..)
-    ) where
+module Shape where
 
 import Linear.V3 (V3 (..))
 import qualified Linear.V3 as V3 (cross)
@@ -18,7 +13,7 @@ data Shape =
   | Sphere {
     center :: V3 Double,
     radius :: Double
-  }
+  } deriving (Eq, Show)
 
 -- given a shape, origin point, and direction, return the intersection point
 intersect :: Shape -> V.Ray -> Maybe (V3 Double)

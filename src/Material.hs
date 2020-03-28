@@ -1,15 +1,6 @@
-module Material
-    ( Color (..),
-      (+^+),
-      (*^*),
-      clampColor,
-      render,
-      ReflectionStrategy (..),
-      reflect,
-      Material (..),
-      Light (..),
-      reflectedLight
-    ) where
+{-# OPTIONS_GHC -fwarn-incomplete-patterns #-}
+
+module Material where
 
 import Linear.V3 (V3 (..))
 import qualified Vector as V
@@ -21,10 +12,7 @@ data Color = Color {
   r :: Double,
   g :: Double,
   b :: Double
-}
-instance Eq Color where
-  (Color r1 g1 b1) == (Color r2 g2 b2) = r1 == r2 && g1 == g2 && b1 == b2
-instance Show Color
+} deriving (Eq, Show)
 
 (+^+) :: Color -> Color -> Color
 (+^+) (Color r1 g1 b1) (Color r2 g2 b2) = Color (r1 + r2) (g1 + g2) (b1 + b2)
@@ -46,6 +34,9 @@ render (Color r g b) = (renderChannel r, renderChannel g, renderChannel b)
 type ColorMultiplier = Color
 
 data ReflectionStrategy = Mirror
+  | Circular {
+    n :: Int
+  } deriving (Eq, Show)
 
 -- accepts an incident ray and normal vector, and returns a list of (reflected ray, multiplier)
 reflect :: ReflectionStrategy -> V3 Double -> V3 Double -> [V3 Double]
@@ -56,12 +47,12 @@ data Material = PhongMaterial {
   diffuse :: ColorMultiplier,
   specular :: ColorMultiplier,
   shininess :: Double
-}
+} deriving (Eq, Show)
 
 data Light = Light {
   intensity :: Color,
   location :: V3 Double
-}
+} deriving (Eq, Show)
 
 reflectedLight :: Material -> [Light] -> Color -> V3 Double -> V3 Double -> V3 Double -> Color
 -- All location vectors (lights, viewer, reflectionPoint) are global coordinates
