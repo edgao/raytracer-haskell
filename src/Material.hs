@@ -3,8 +3,11 @@
 module Material where
 
 import Linear.V3 (V3 (..))
+import qualified Linear.V3 as V3
 import qualified Vector as V
 import Vector ((.*.), (***), (+*+), (-*-))
+
+import qualified Control.Applicative as A
 
 -- 0 represents minimum brightness, 1 represents maximum.
 -- Callers should use clampColor to sanitize values outside those bounds.
@@ -34,13 +37,20 @@ render (Color r g b) = (renderChannel r, renderChannel g, renderChannel b)
 type ColorMultiplier = Color
 
 data ReflectionStrategy = Mirror
-  | Circular {
+  | SphericalBurst {
     n :: Int
   } deriving (Eq, Show)
 
 -- accepts an incident ray and normal vector, and returns a list of (reflected ray, multiplier)
 reflect :: ReflectionStrategy -> V3 Double -> V3 Double -> [V3 Double]
 reflect Mirror incidentRay normalVector = [V.reflect incidentRay normalVector]
+reflect (SphericalBurst n) incidentRay normalVector = burstRays
+  where reflectedRay = V.normalize $ V.reflect incidentRay normalVector
+        axis = V.reject normalVector reflectedRay
+        angles = map getAngle [0,1..n]
+          where getAngle x = 2 * fromIntegral x * pi / (fromIntegral n + 1)
+        burstRays = filter (\ray -> ray .*. normalVector > 0) $ map getRay $ A.liftA2 (,) angles angles
+          where getRay (a1, a2) = V.rotate (V.rotate reflectedRay axis a1) reflectedRay a2
 
 data Material = PhongMaterial {
   ambient :: ColorMultiplier,

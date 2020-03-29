@@ -3,6 +3,7 @@
 module Vector where
 
 import Linear.V3 (V3 (..))
+import qualified Linear.V3 as V
 
 dot :: V3 Double -> V3 Double -> Double
 dot (V3 x1 y1 z1) (V3 x2 y2 z2) = x1 * x2 + y1 * y2 + z1 * z2
@@ -30,8 +31,9 @@ normalize :: V3 Double -> V3 Double
 normalize v = scale (1 / norm v) v
 
 -- incidentRay is pointed _towards_ us, and the returned vector is pointed _away_ from us
+-- normalVector must be normalized
 reflect :: V3 Double -> V3 Double -> V3 Double
-reflect incidentRay normalVector = incidentRay -*- ((2 * (incidentRay .*. normalVector)) *** normalVector)
+reflect incidentRay normalVector = incidentRay -*- (2 *** project incidentRay normalVector)
 
 negReflect :: V3 Double -> V3 Double -> V3 Double
 negReflect incidentRay = reflect ((-1) *** incidentRay)
@@ -40,3 +42,16 @@ data Ray = Ray {
   origin :: V3 Double,
   direction :: V3 Double
 }
+
+rotate :: V3 Double ->  V3 Double -> Double -> V3 Double
+-- Assumes that vec and axis are perpendicular and normalized
+-- angle is in radians
+rotate vec axis angle = (cos angle *** vec) +*+ (sin angle *** V.cross axis vec)
+
+project :: V3 Double -> V3 Double -> V3 Double
+-- Assumes that target is normalized
+project vec target = (vec .*. target) *** target
+
+reject :: V3 Double -> V3 Double -> V3 Double
+-- Assumes that target is normalized
+reject vec target = vec -*- project vec target

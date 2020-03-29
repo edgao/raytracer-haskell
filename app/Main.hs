@@ -38,7 +38,7 @@ main = do
     ) <- Y.decodeThrow configStr :: IO C.Config
   let shapes = map C.toTuple objects
   let cameraDirectionNorm = V.normalize cameraDirection
-      viewportUp = V.normalize $ viewportVertical -*- ((viewportVertical .*. cameraDirection) *** cameraDirectionNorm)
+      viewportUp = V.normalize $ V.reject viewportVertical cameraDirectionNorm
       viewportRight = V.normalize $ cross cameraDirection viewportUp
       viewportUpperLeft = cameraPosition +*+ (viewportDistance *** cameraDirectionNorm) +*+ ((viewportHeight / 2) *** viewportUp) -*- ((viewportWidth / 2) *** viewportRight)
   let fn imgX imgY =
